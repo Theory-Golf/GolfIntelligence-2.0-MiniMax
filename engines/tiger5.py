@@ -104,6 +104,16 @@ class Tiger5Engine:
         Returns:
             Dictionary with fail counts and rates
         """
+        # Handle empty or invalid input
+        if hole_df is None or len(hole_df) == 0:
+            return {
+                'total_holes': 0,
+                'categories': {},
+                'grit_score': 100.0,
+                'total_fails': 0,
+                'total_attempts': 0
+            }
+        
         results = {
             'total_holes': len(hole_df),
             'categories': {},
@@ -128,7 +138,11 @@ class Tiger5Engine:
                 attempts = len(hole_df)
             
             # Calculate fails
-            fails = category['fail_condition'](hole_df).sum()
+            try:
+                fail_mask = category['fail_condition'](hole_df)
+                fails = int(fail_mask.sum()) if hasattr(fail_mask, 'sum') else int(fail_mask)
+            except (KeyError, AttributeError, TypeError) as e:
+                fails = 0
             
             fail_rate = (fails / attempts * 100) if attempts > 0 else 0
             
