@@ -116,6 +116,7 @@ def initialize_engines(config):
     from engines.putting import PuttingEngine
     from engines.tiger5 import Tiger5Engine
     from engines.coach_corner import CoachCornerEngine
+    from engines.strokes_gained import StrokesGainedEngine
     
     driving = DrivingEngine()
     approach = ApproachEngine()
@@ -123,6 +124,7 @@ def initialize_engines(config):
     putting = PuttingEngine()
     tiger5 = Tiger5Engine()
     coach = CoachCornerEngine()
+    strokes_gained = StrokesGainedEngine()
     
     return {
         'field_mapper': field_mapper,
@@ -136,7 +138,8 @@ def initialize_engines(config):
         'short_game': short_game,
         'putting': putting,
         'tiger5': tiger5,
-        'coach': coach
+        'coach': coach,
+        'strokes_gained': strokes_gained
     }
 
 
