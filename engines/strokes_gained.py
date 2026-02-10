@@ -18,12 +18,12 @@ class StrokesGainedEngine:
     - SG analysis by various dimensions
     """
     
-    def __init__(self, field_mapper):
+    def __init__(self, field_mapper=None):
         """
         Initialize SG engine.
         
         Args:
-            field_mapper: FieldMapper instance
+            field_mapper: FieldMapper instance (optional)
         """
         self.field_mapper = field_mapper
     
