@@ -85,12 +85,30 @@ class Tiger5Engine:
         hole_metrics = hole_metrics.merge(putts, on=['round_id', 'hole'], how='left')
         hole_metrics['putts'] = hole_metrics['putts'].fillna(0)
         
-        # Calculate score vs par (default par 3)
-        hole_metrics['score_vs_par'] = hole_metrics['hole_score'] - 3
+        # Calculate par based on first shot distance (tee shot)
+        # Par 3: 0-240 yards
+        # Par 4: 240-490 yards
+        # Par 5: 490-600 yards
+        def get_par_from_distance(distance):
+            if pd.isna(distance):
+                return 3  # Default to par 3 if no distance
+            if distance < 240:
+                return 3
+            elif distance < 490:
+                return 4
+            else:
+                return 5
         
-        # Add par column (default par 3 for all holes)
-        # In a real app, this would come from course data
-        hole_metrics['par'] = 3
+        # Get first shot distance for each hole
+        first_shots = df[df['shot'] == 1][['round_id', 'hole', 'starting_distance']].copy()
+        first_shots.columns = ['round_id', 'hole', 'first_shot_distance']
+        hole_metrics = hole_metrics.merge(first_shots, on=['round_id', 'hole'], how='left')
+        
+        # Calculate par from first shot distance
+        hole_metrics['par'] = hole_metrics['first_shot_distance'].apply(get_par_from_distance)
+        
+        # Calculate score vs par
+        hole_metrics['score_vs_par'] = hole_metrics['hole_score'] - hole_metrics['par']
         
         return hole_metrics
     
@@ -133,7 +151,9 @@ class Tiger5Engine:
             if attempts_col == 'all':
                 attempts = len(hole_df)
             elif attempts_col == 'par5':
-                attempts = len(hole_df[hole_df['hole'].isin([1, 2, 3])])  # Assuming par 5 holes
+                # Par 5 holes based on first shot distance
+                par5_mask = hole_df.get('par', 3) == 5
+                attempts = par5_mask.sum() if hasattr(par5_mask, 'sum') else len(hole_df[hole_df.get('par', 3) == 5])
             else:
                 attempts = len(hole_df)
             
@@ -262,7 +282,7 @@ class Tiger5Engine:
                 scenario['fails'].append('3 Putts')
             if row.get('score_vs_par', 0) >= 2:
                 scenario['fails'].append('Double Bogey')
-            # Par 5 holes: check if hole has par of 5
+            # Par 5 holes: check if hole has par of 5 (based on first shot distance)
             if row.get('par', 3) == 5 and row.get('hole_score', 0) >= 6:
                 scenario['fails'].append('Par 5 Bogey')
             
