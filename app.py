@@ -28,45 +28,263 @@ from core.caching_layer import CachingLayer
 
 # Page configuration
 st.set_page_config(
-    page_title="Golf Intelligence Dashboard",
+    page_title="Golf Intelligence",
     page_icon="⛳",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for premium look
+# Premium Nordic Theme CSS
 st.markdown("""
 <style>
-    .stMetric {
-        background-color: #f0f2f6;
-        border-radius: 10px;
-        padding: 15px;
+    /* Nordic Theme - Clean, Minimal, Premium */
+    
+    /* Main background */
+    .stApp {
+        background-color: #FAFAFA;
     }
+    
+    /* Sidebar */
+    section[data-testid="stSidebar"] {
+        background-color: #F5F5F5;
+        border-right: 1px solid #E0E0E0;
+    }
+    
+    /* Typography */
+    h1, h2, h3, h4 {
+        font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 600;
+        color: #2C3E50;
+        letter-spacing: -0.5px;
+    }
+    
+    h1 {
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    h2 {
+        font-size: 1.6rem;
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #E8E8E8;
+        padding-bottom: 0.5rem;
+    }
+    
+    h3 {
+        font-size: 1.2rem;
+        color: #34495E;
+        margin-top: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Metric cards - Nordic style */
     .metric-card {
-        background-color: #ffffff;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        background-color: #FFFFFF;
+        border-radius: 12px;
+        padding: 24px 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03);
         text-align: center;
+        border: 1px solid #EEEEEE;
+        transition: all 0.2s ease;
     }
+    
+    .metric-card:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transform: translateY(-1px);
+    }
+    
     .metric-value {
-        font-size: 2em;
-        font-weight: bold;
-        color: #1f77b4;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #2C3E50;
+        line-height: 1.2;
+        font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
     }
+    
     .metric-label {
-        font-size: 0.9em;
-        color: #666;
+        font-size: 0.85rem;
+        color: #7F8C8D;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 500;
+        margin-top: 0.5rem;
     }
+    
+    /* Confidence badges */
     .confidence-badge {
-        padding: 5px 10px;
-        border-radius: 15px;
-        font-size: 0.8em;
-        font-weight: bold;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
-    .confidence-high { background-color: #4CAF50; color: white; }
-    .confidence-medium { background-color: #FF9800; color: white; }
-    .confidence-low { background-color: #F44336; color: white; }
+    
+    .confidence-high {
+        background-color: #E8F5E9;
+        color: #2E7D32;
+    }
+    
+    .confidence-medium {
+        background-color: #FFF3E0;
+        color: #E65100;
+    }
+    
+    .confidence-low {
+        background-color: #FFEBEE;
+        color: #C62828;
+    }
+    
+    /* Streamlit metric styling */
+    div[data-testid="stMetric"] {
+        background-color: #FFFFFF;
+        border-radius: 10px;
+        padding: 16px 20px;
+        border: 1px solid #EEEEEE;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    
+    div[data-testid="stMetricLabel"] {
+        font-size: 0.8rem;
+        color: #95A5A6;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+    }
+    
+    div[data-testid="stMetricValue"] {
+        font-size: 1.6rem;
+        font-weight: 600;
+        color: #2C3E50;
+    }
+    
+    /* Tabs - Nordic style */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+        background-color: transparent;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        background-color: #FFFFFF;
+        border: 1px solid #E0E0E0;
+        border-radius: 8px 8px 0 0;
+        padding: 10px 20px;
+        font-weight: 500;
+        color: #7F8C8D;
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background-color: #FFFFFF;
+        border-bottom: 3px solid #3498DB;
+        color: #2C3E50;
+    }
+    
+    /* Cards and containers */
+    .stMarkdown > div {
+        background-color: transparent;
+    }
+    
+    /* Divider */
+    hr {
+        border: none;
+        border-top: 1px solid #E8E8E8;
+        margin: 1.5rem 0;
+    }
+    
+    /* Info and warning boxes */
+    .stAlert {
+        border-radius: 8px;
+        padding: 12px 16px;
+    }
+    
+    /* Dataframes */
+    .stDataFrame {
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #E8E8E8;
+    }
+    
+    /* Select boxes and inputs */
+    div[data-baseweb="select"] > div {
+        background-color: #FFFFFF;
+        border-radius: 8px;
+        border: 1px solid #E0E0E0;
+    }
+    
+    /* Expander */
+    .stExpander {
+        background-color: #FFFFFF;
+        border-radius: 8px;
+        border: 1px solid #E8E8E8;
+    }
+    
+    /* Buttons */
+    .stButton > button {
+        background-color: #3498DB;
+        color: white;
+        border-radius: 8px;
+        border: none;
+        font-weight: 500;
+        padding: 10px 24px;
+    }
+    
+    .stButton > button:hover {
+        background-color: #2980B9;
+    }
+    
+    /* Progress bars */
+    .stProgress > div > div {
+        background-color: #3498DB;
+        border-radius: 4px;
+    }
+    
+    /* Tables */
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    
+    th {
+        background-color: #F8F9FA;
+        font-weight: 600;
+        color: #2C3E50;
+        text-align: left;
+        padding: 12px 16px;
+        border-bottom: 2px solid #E8E8E8;
+    }
+    
+    td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #EEEEEE;
+        color: #34495E;
+    }
+    
+    /* Subtle color accents */
+    .positive {
+        color: #27AE60;
+    }
+    
+    .negative {
+        color: #E74C3C;
+    }
+    
+    .neutral {
+        color: #7F8C8D;
+    }
+    
+    /* Hide Streamlit elements */
+    #MainMenu {
+        visibility: hidden;
+    }
+    
+    footer {
+        visibility: hidden;
+    }
+    
+    header {
+        visibility: hidden;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -150,7 +368,7 @@ def main():
     engines = initialize_engines(config)
     
     # Sidebar - Filters
-    st.sidebar.header("🎯 Filters")
+    st.sidebar.markdown('<h3 style="margin-bottom: 1rem;">Filters</h3>', unsafe_allow_html=True)
     
     # Data loading
     data_source = st.sidebar.selectbox(
@@ -192,20 +410,24 @@ def main():
     if n_rounds < 10:
         st.sidebar.warning(f"⚠️ Small sample: {n_rounds} rounds (confidence limited)")
     
-    # Main content
-    st.title("⛳ Golf Intelligence Dashboard")
-    st.markdown("Premium analytics for golf performance optimization")
+    # Main content - Clean header
+    st.markdown("""
+    <div style="margin-bottom: 2rem;">
+        <h1 style="margin-bottom: 0.25rem;">⛳ Golf Intelligence</h1>
+        <p style="color: #7F8C8D; font-size: 1rem; margin: 0;">Analytics & insights for better golf</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Overview KPIs
     render_overview_kpis(filtered_df, engines['metric_engine'])
     
-    # Page tabs
+    # Page tabs - Clean Nordic style
     tabs = st.tabs([
-        "🏆 Tiger 5 Overview",
-        "🔍 Tiger 5 Root Cause",
-        "🎯 Game Pillars",
-        "📊 SG Skill Profile",
-        "🧠 Coach Magic"
+        "Tiger 5",
+        "Root Cause",
+        "Game Pillars",
+        "SG Profile",
+        "Coach Magic"
     ])
     
     with tabs[0]:
@@ -380,8 +602,8 @@ def render_overview_kpis(df: pd.DataFrame, metric_engine):
 
 def render_tiger5_overview(df: pd.DataFrame, engines: dict, tiger5_config: dict):
     """Render Tiger 5 Overview page."""
-    st.header("🏆 Tiger 5 Overview")
-    st.markdown("Analysis of blowup hole prevention")
+    st.markdown('<h2 style="border-bottom: 2px solid #E8E8E8; padding-bottom: 0.5rem;">Tiger 5 Analysis</h2>', unsafe_allow_html=True)
+    st.markdown("<p style='color: #7F8C8D; margin-bottom: 1.5rem;'>Track and prevent blowup holes</p>")
     
     if len(df) == 0:
         st.warning("No data available for Tiger 5 analysis")
@@ -488,8 +710,8 @@ def render_tiger5_overview(df: pd.DataFrame, engines: dict, tiger5_config: dict)
 
 def render_tiger5_root_cause(df: pd.DataFrame, engines: dict, tiger5_config: dict):
     """Render Tiger 5 Root Cause page."""
-    st.header("🔍 Tiger 5 Root Cause Explorer")
-    st.markdown("Diagnose the causes of blowup holes")
+    st.markdown('<h2 style="border-bottom: 2px solid #E8E8E8; padding-bottom: 0.5rem;">Root Cause Analysis</h2>', unsafe_allow_html=True)
+    st.markdown("<p style='color: #7F8C8D; margin-bottom: 1.5rem;'>Diagnose what causes your blowup holes</p>")
     
     if len(df) == 0:
         st.warning("No data available for root cause analysis")
@@ -538,8 +760,8 @@ def render_tiger5_root_cause(df: pd.DataFrame, engines: dict, tiger5_config: dic
 
 def render_game_pillars(df: pd.DataFrame, engines: dict):
     """Render Game Pillars page."""
-    st.header("🎯 Game Pillars")
-    st.markdown("Detailed analysis by skill area")
+    st.markdown('<h2 style="border-bottom: 2px solid #E8E8E8; padding-bottom: 0.5rem;">Game Pillars</h2>', unsafe_allow_html=True)
+    st.markdown("<p style='color: #7F8C8D; margin-bottom: 1.5rem;'>Detailed breakdown of each skill area</p>")
     
     if len(df) == 0:
         st.warning("No data available for pillar analysis")
@@ -773,8 +995,8 @@ def render_putting_pillar(df: pd.DataFrame, putting_engine):
 
 def render_sg_skill_profile(df: pd.DataFrame, engines: dict):
     """Render SG Skill Profile page."""
-    st.header("📊 SG Skill Profile")
-    st.markdown("Strokes Gained skill breakdown")
+    st.markdown('<h2 style="border-bottom: 2px solid #E8E8E8; padding-bottom: 0.5rem;">SG Skill Profile</h2>', unsafe_allow_html=True)
+    st.markdown("<p style='color: #7F8C8D; margin-bottom: 1.5rem;'>Strokes Gained breakdown by category</p>")
     
     if len(df) == 0:
         st.warning("No data available for SG analysis")
@@ -835,8 +1057,8 @@ def render_sg_skill_profile(df: pd.DataFrame, engines: dict):
 
 def render_coach_magic(df: pd.DataFrame, engines: dict):
     """Render Coach Magic page."""
-    st.header("🧠 Coach Magic Engine")
-    st.markdown("AI-powered coaching insights and recommendations")
+    st.markdown('<h2 style="border-bottom: 2px solid #E8E8E8; padding-bottom: 0.5rem;">Coach Magic</h2>', unsafe_allow_html=True)
+    st.markdown("<p style='color: #7F8C8D; margin-bottom: 1.5rem;'>AI-powered insights and recommendations</p>")
     
     if len(df) == 0:
         st.warning("No data available for coaching analysis")
