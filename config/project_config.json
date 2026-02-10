@@ -1,0 +1,139 @@
+{
+  "project": "Golf Intelligence Dashboard 2.0",
+  "version": "1.0.0",
+  "description": "Premium golf analytics dashboard with Tiger 5 analysis, Strokes Gained, and AI-powered coaching insights",
+  "author": "Golf Intelligence Team",
+  "theme": {
+    "primary_color": "#1E3A5F",
+    "secondary_color": "#2E86AB",
+    "accent_color": "#48A9A6",
+    "success_color": "#4CAF50",
+    "warning_color": "#FF9800",
+    "danger_color": "#F44336",
+    "dark_background": "#0D1B2A",
+    "light_background": "#F8F9FA"
+  },
+  "data": {
+    "shot_level_fields": [
+      "Player",
+      "Round ID",
+      "Date",
+      "Course",
+      "Weather Difficulty",
+      "Course Difficulty",
+      "Tournament",
+      "Benchmark",
+      "Shot",
+      "Hole",
+      "Score",
+      "Starting Distance",
+      "Starting Location",
+      "Ending Distance",
+      "Ending Location",
+      "Penalty",
+      "Starting SG",
+      "Ending SG",
+      "Strokes Gained"
+    ],
+    "round_level_fields": [
+      "Player",
+      "Round ID",
+      "Date",
+      "Course",
+      "Weather Difficulty",
+      "Course Difficulty",
+      "Tournament"
+    ],
+    "supported_benchmarks": [
+      "Scratch Golfer",
+      "PGA Tour",
+      "Elite College (+3)",
+      "Competitive Scratch (0)"
+    ]
+  },
+  "tiger5_categories": [
+    {
+      "name": "3 Putts",
+      "definition": "Any hole with ≥3 putts",
+      "attempts": "Holes with ≥1 putt",
+      "fails": "Holes with ≥3 putts",
+      "icon": "⛳"
+    },
+    {
+      "name": "Double Bogey",
+      "definition": "Score ≥ par + 2",
+      "attempts": "All holes",
+      "fails": "Score ≥ par + 2",
+      "icon": "🔴"
+    },
+    {
+      "name": "Par 5 Bogey",
+      "definition": "Par 5 holes with score ≥ 6",
+      "attempts": "Par 5 holes only",
+      "fails": "Score ≥ 6 on Par 5",
+      "icon": "📏"
+    },
+    {
+      "name": "Missed Green",
+      "definition": "Short game shot not ending on green",
+      "attempts": "Holes with short game shot",
+      "fails": "Any short game shot not on green",
+      "icon": "🏌️"
+    },
+    {
+      "name": "125yd Bogey",
+      "definition": "Scoring shot inside 125yd resulting in bogey+",
+      "attempts": "Shot on par 3 hole (Shot 1), par 4 (Shot 2), par 5 (Shot 3) from ≤125yd",
+      "fails": "Hole score > par",
+      "icon": "🎯"
+    }
+  ],
+  "shot_categories": {
+    "driving": {
+      "definition": "Tee shots on par 4 and par 5 holes only",
+      "conditions": ["Hole Type in ['Par 4', 'Par 5']", "Shot == 1"]
+    },
+    "approach": {
+      "definition": "Shots to the green from >25 yards",
+      "conditions": ["Starting Distance > 25", "Starting Location != 'Tee'"]
+    },
+    "short_game": {
+      "definition": "Shots within 25 yards of green",
+      "conditions": ["Starting Distance <= 25", "Starting Location != 'Tee'"]
+    },
+    "putting": {
+      "definition": "Shots on the green",
+      "conditions": ["Starting Location == 'Green'"]
+    }
+  },
+  "distance_buckets": {
+    "driving": ["<200", "200-250", "250-300", "300+"],
+    "approach": ["50-100", "100-150", "150-200", "200+"],
+    "short_game": ["<10", "10-20", "20-30", "30-40", "40-50"],
+    "putting": ["0-3", "4-6", "7-10", "10-20", "20-30", "30+"]
+  },
+  "small_sample_analytics": {
+    "tournament_rounds": 3,
+    "season_rounds": 20,
+    "confidence_threshold": 10,
+    "bootstrap_samples": 100,
+    "consistency_metrics": ["IQR", "Std Dev", "Range", "Coefficient of Variation"]
+  },
+  "benchmarks": {
+    "a": {
+      "filename": "benchmark_a_pga_tour.csv",
+      "display_name": "PGA Tour",
+      "description": "Professional baseline"
+    },
+    "b": {
+      "filename": "benchmark_b_college.csv",
+      "display_name": "College (+3)",
+      "description": "High-level amateur baseline"
+    },
+    "c": {
+      "filename": "benchmark_c_scratch.csv",
+      "display_name": "Scratch Golfer",
+      "description": "Competitive amateur baseline"
+    }
+  }
+}

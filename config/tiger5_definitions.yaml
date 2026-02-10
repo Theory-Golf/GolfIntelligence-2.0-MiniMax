@@ -1,0 +1,174 @@
+# Tiger 5 Category Definitions
+# Each category defines what constitutes a "fail" and how to count attempts
+
+categories:
+  # Category 1: 3 Putts
+  three_putts:
+    name: "3 Putts"
+    icon: "⛳"
+    short_name: "3-Putt"
+    definition: "Any hole with 3 or more putts"
+    description: "Three-putting is one of the quickest ways to compound scoring errors"
+    
+    attempts:
+      condition: "hole_putts >= 1"
+      description: "All holes where at least 1 putt was made"
+    
+    fails:
+      condition: "hole_putts >= 3"
+      description: "Holes with 3 or more putts"
+    
+    root_causes:
+      - "Lag putting distance control"
+      - "Green reading"
+      - "Speed management"
+      - "Short putt conversion pressure"
+    
+    metrics:
+      - "putts_per_hole"
+      - "three_putt_rate"
+      - "lag_putt_leave_distance"
+
+  # Category 2: Double Bogey or Worse
+  double_bogey:
+    name: "Double Bogey"
+    icon: "🔴"
+    short_name: "Double+"
+    definition: "Score of par + 2 or worse"
+    description: "Blowup holes that destroy scoring averages"
+    
+    attempts:
+      condition: "true"
+      description: "All holes"
+    
+    fails:
+      condition: "score_vs_par >= 2"
+      description: "Holes where score is 2 or more over par"
+    
+    root_causes:
+      - "Driving errors (OB, penalty)"
+      - "Approach shots finding hazards/bunkers"
+      - "Short game misses"
+      - "3-putting from long range"
+    
+    metrics:
+      - "double_bogey_rate"
+      - "bogey_or_worse_rate"
+      - "score_distribution"
+
+  # Category 3: Par 5 Bogey
+  par5_bogey:
+    name: "Par 5 Bogey"
+    icon: "📏"
+    short_name: "Par5 Bogey"
+    definition: "Par 5 holes scored 6 or worse (bogey or worse)"
+    description: "Failing to capitalize on scoring opportunities"
+    
+    attempts:
+      condition: "hole_par == 5"
+      description: "Par 5 holes only"
+    
+    fails:
+      condition: "hole_score >= 6"
+      description: "Par 5 holes scored 6 or worse"
+    
+    root_causes:
+      - "Driving position (fairway vs rough)"
+      - "Approach shot quality"
+      - "Layup distance control"
+      - "Short game around the green"
+      - "Putting on long par 5s"
+    
+    metrics:
+      - "par5_scoring_average"
+      - "par5_birdie_rate"
+      - "par5_fairway_hit_rate"
+
+  # Category 4: Missed Green
+  missed_green:
+    name: "Missed Green"
+    icon: "🏌️"
+    short_name: "Missed GIR"
+    definition: "Short game shot that doesn't end on the green"
+    description: "Failed up-and-down opportunities"
+    
+    attempts:
+      condition: "is_short_game_shot == true"
+      description: "All shots within 25 yards of green (excluding putts)"
+    
+    fails:
+      condition: "shot_category == 'short_game' AND ending_location != 'Green'"
+      description: "Short game shots not ending on green"
+    
+    root_causes:
+      - "Chipping technique"
+      - "Distance control"
+      - "Lie quality (fairway vs rough vs sand)"
+      - "Club selection"
+    
+    metrics:
+      - "gir_rate"
+      - "scrambling_rate"
+      - "short_game_sg"
+      - "proximity_by_lie"
+
+  # Category 125yd Bogey
+  yd125_bogey:
+    name: "125yd Bogey"
+    icon: "🎯"
+    short_name: "125yd Bogey"
+    definition: "Scoring approach inside 125 yards resulting in bogey or worse"
+    description: "Poor approach shots from scoring range"
+    
+    scoring_shot_definition:
+      par3: "Shot 1 from <= 125 yards"
+      par4: "Shot 2 from <= 125 yards"
+      par5: "Shot 3 from <= 125 yards"
+    
+    attempts:
+      condition: "is_scoring_shot == true AND distance <= 125"
+      description: "Scoring shots from 125 yards or closer"
+    
+    fails:
+      condition: "hole_score > par"
+      description: "Hole scored over par despite scoring approach"
+    
+    root_causes:
+      - "Approach distance control"
+      - "Green finding accuracy"
+      - "Long iron/hybrid accuracy"
+      - "Pressure on scoring shots"
+    
+    metrics:
+      - "proximity_from_range"
+      - "gir_rate_100_125"
+      - "scoring_sg"
+      - "approach_sg_by_distance"
+
+# GRIT SCORE CALCULATION
+grit_score:
+  description: "Percentage of Tiger 5 opportunities converted successfully"
+  formula: "((total_attempts - total_fails) / total_attempts) * 100"
+  interpretation:
+    high: "> 85%"
+    medium: "75-85%"
+    low: "< 75%"
+
+# AGGREGATION RULES
+aggregation:
+  by_round: true
+  by_course: false
+  by_tournament: true
+  by_time_period: true
+
+# VISUALIZATION SETTINGS
+visualization:
+  colors:
+    fail: "#F44336"
+    success: "#4CAF50"
+    neutral: "#9E9E9E"
+  chart_types:
+    - "bar"
+    - "donut"
+    - "trend_line"
+    - "heatmap"

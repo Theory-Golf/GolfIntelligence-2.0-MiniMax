@@ -1,0 +1,84 @@
+# Golf Intelligence Dashboard - Field Mapping Configuration
+# Map your data field names to the standard internal field names
+
+# PRIMARY SHOT-LEVEL FIELDS
+shot_level:
+  # Required fields
+  player: "Player"           # Player name/identifier
+  round_id: "Round ID"      # Unique round identifier
+  date: "Date"              # Round date (YYYY-MM-DD format)
+  course: "Course"          # Course name
+  shot: "Shot"              # Shot number on hole (1, 2, 3...)
+  hole: "Hole"              # Hole number (1-18)
+  score: "Score"            # Cumulative score through shot
+  
+  # Shot details
+  starting_distance: "Starting Distance"  # Distance before shot
+  starting_location: "Starting Location"  # Tee, Fairway, Rough, Sand, Recovery, Green
+  ending_distance: "Ending Distance"      # Distance after shot
+  ending_location: "Ending Location"     # Tee, Fairway, Rough, Sand, Recovery, Green
+  penalty: "Penalty"                     # Yes, No
+  
+  # Strokes Gained (pre-computed)
+  starting_sg: "Starting SG"    # Expected strokes remaining at start
+  ending_sg: "Ending SG"        # Expected strokes remaining at end
+  strokes_gained: "Strokes Gained"  # SG value for this shot
+  
+  # Optional fields
+  weather_difficulty: "Weather Difficulty"  # e.g., Cold, Warm, Windy
+  course_difficulty: "Course Difficulty"     # e.g., Easy, Standard, Hard
+  tournament: "Tournament"        # Tournament name
+  benchmark_used: "Benchmark"     # Benchmark used for pre-computed SG
+
+# ROUND-LEVEL FIELDS (derived from shot-level)
+round_level:
+  - "Player"
+  - "Round ID"
+  - "Date"
+  - "Course"
+  - "Weather Difficulty"
+  - "Course Difficulty"
+  - "Tournament"
+
+# LOCATION ENUM MAPPINGS
+locations:
+  tee: ["Tee"]
+  fairway: ["Fairway"]
+  rough: ["Rough"]
+  sand: ["Sand"]
+  recovery: ["Recovery"]
+  green: ["Green", "Putt"]
+  # Map any alternative names
+  aliases:
+    "Fairway Bunker": "Sand"
+    "Deep Rough": "Rough"
+    "Water Hazard": "Recovery"
+    "Tree": "Recovery"
+
+# DISTANCE UNITS
+distance:
+  unit: "yards"  # or "feet" - used for display and calculations
+
+# PAR VALUES (course-specific, can be overridden)
+par_defaults:
+  par3: 3
+  par4: 4
+  par5: 5
+
+# SAMPLE DATA FILE
+sample_data:
+  file: "data/sample_data.csv"
+  format: "csv"
+
+# BENCHMARK FILES
+benchmarks:
+  directory: "data/benchmarks/"
+  format: "csv"
+  columns:
+    distance: "Distance"
+    tee: "Tee"
+    fairway: "Fairway"
+    rough: "Rough"
+    sand: "Sand"
+    recovery: "Recovery"
+    putt: "Putt"
