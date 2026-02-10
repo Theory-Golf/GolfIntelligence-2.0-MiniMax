@@ -90,7 +90,7 @@ def render_tiger5_overview(df: pd.DataFrame, engines: dict, tiger5_config: dict)
                 <div style="font-size: 1.5em;">{icon}</div>
                 <div class="metric-value" style="font-size: 1.2em;">{fail_rate:.1f}%</div>
                 <div class="metric-label">{cat_name}</div>
-                <div style="font-size: 0.8em; color: #666;">{fails}/{attempts} attempts</div>
+                <div style="font-size: 0.8em; color: #404040;">{fails}/{attempts} attempts</div>
             </div>
             """, unsafe_allow_html=True)
     

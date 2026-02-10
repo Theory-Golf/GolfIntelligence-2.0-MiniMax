@@ -104,7 +104,7 @@ st.markdown("""
     
     .metric-label {
         font-size: 0.85rem;
-        color: #7F8C8D;
+        color: #404040;
         text-transform: uppercase;
         letter-spacing: 1px;
         font-weight: 500;
@@ -147,7 +147,7 @@ st.markdown("""
     
     div[data-testid="stMetricLabel"] {
         font-size: 0.8rem;
-        color: #95A5A6;
+        color: #4a4a4a;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         font-weight: 500;
@@ -171,7 +171,7 @@ st.markdown("""
         border-radius: 8px 8px 0 0;
         padding: 10px 20px;
         font-weight: 500;
-        color: #7F8C8D;
+        color: #404040;
     }
     
     .stTabs [aria-selected="true"] {
@@ -257,7 +257,7 @@ st.markdown("""
     td {
         padding: 12px 16px;
         border-bottom: 1px solid #EEEEEE;
-        color: #34495E;
+        color: #1a1a1a;
     }
     
     /* Subtle color accents */
@@ -270,7 +270,7 @@ st.markdown("""
     }
     
     .neutral {
-        color: #7F8C8D;
+        color: #404040;
     }
     
     /* Hide Streamlit elements */
@@ -414,7 +414,7 @@ def main():
     st.markdown("""
     <div style="margin-bottom: 2rem;">
         <h1 style="margin-bottom: 0.25rem;">⛳ Golf Intelligence</h1>
-        <p style="color: #7F8C8D; font-size: 1rem; margin: 0;">Analytics & insights for better golf</p>
+        <p style="color: #404040; font-size: 1rem; margin: 0;">Analytics & insights for better golf</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -603,7 +603,7 @@ def render_overview_kpis(df: pd.DataFrame, metric_engine):
 def render_tiger5_overview(df: pd.DataFrame, engines: dict, tiger5_config: dict):
     """Render Tiger 5 Overview page."""
     st.markdown('<h2 style="border-bottom: 2px solid #E8E8E8; padding-bottom: 0.5rem;">Tiger 5 Analysis</h2>', unsafe_allow_html=True)
-    st.markdown("<p style='color: #7F8C8D; margin-bottom: 1.5rem;'>Track and prevent blowup holes</p>")
+    st.markdown("<p style='color: #404040; margin-bottom: 1.5rem;'>Track and prevent blowup holes</p>")
     
     if len(df) == 0:
         st.warning("No data available for Tiger 5 analysis")
@@ -711,7 +711,7 @@ def render_tiger5_overview(df: pd.DataFrame, engines: dict, tiger5_config: dict)
 def render_tiger5_root_cause(df: pd.DataFrame, engines: dict, tiger5_config: dict):
     """Render Tiger 5 Root Cause page."""
     st.markdown('<h2 style="border-bottom: 2px solid #E8E8E8; padding-bottom: 0.5rem;">Root Cause Analysis</h2>', unsafe_allow_html=True)
-    st.markdown("<p style='color: #7F8C8D; margin-bottom: 1.5rem;'>Diagnose what causes your blowup holes</p>")
+    st.markdown("<p style='color: #404040; margin-bottom: 1.5rem;'>Diagnose what causes your blowup holes</p>")
     
     if len(df) == 0:
         st.warning("No data available for root cause analysis")
@@ -761,7 +761,7 @@ def render_tiger5_root_cause(df: pd.DataFrame, engines: dict, tiger5_config: dic
 def render_game_pillars(df: pd.DataFrame, engines: dict):
     """Render Game Pillars page."""
     st.markdown('<h2 style="border-bottom: 2px solid #E8E8E8; padding-bottom: 0.5rem;">Game Pillars</h2>', unsafe_allow_html=True)
-    st.markdown("<p style='color: #7F8C8D; margin-bottom: 1.5rem;'>Detailed breakdown of each skill area</p>")
+    st.markdown("<p style='color: #404040; margin-bottom: 1.5rem;'>Detailed breakdown of each skill area</p>")
     
     if len(df) == 0:
         st.warning("No data available for pillar analysis")
@@ -996,7 +996,7 @@ def render_putting_pillar(df: pd.DataFrame, putting_engine):
 def render_sg_skill_profile(df: pd.DataFrame, engines: dict):
     """Render SG Skill Profile page."""
     st.markdown('<h2 style="border-bottom: 2px solid #E8E8E8; padding-bottom: 0.5rem;">SG Skill Profile</h2>', unsafe_allow_html=True)
-    st.markdown("<p style='color: #7F8C8D; margin-bottom: 1.5rem;'>Strokes Gained breakdown by category</p>")
+    st.markdown("<p style='color: #404040; margin-bottom: 1.5rem;'>Strokes Gained breakdown by category</p>")
     
     if len(df) == 0:
         st.warning("No data available for SG analysis")
@@ -1058,7 +1058,7 @@ def render_sg_skill_profile(df: pd.DataFrame, engines: dict):
 def render_coach_magic(df: pd.DataFrame, engines: dict):
     """Render Coach Magic page."""
     st.markdown('<h2 style="border-bottom: 2px solid #E8E8E8; padding-bottom: 0.5rem;">Coach Magic</h2>', unsafe_allow_html=True)
-    st.markdown("<p style='color: #7F8C8D; margin-bottom: 1.5rem;'>AI-powered insights and recommendations</p>")
+    st.markdown("<p style='color: #404040; margin-bottom: 1.5rem;'>AI-powered insights and recommendations</p>")
     
     if len(df) == 0:
         st.warning("No data available for coaching analysis")
