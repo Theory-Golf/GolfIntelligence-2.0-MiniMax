@@ -36,27 +36,27 @@ class Tiger5Engine:
                 {
                     'name': '3 Putts',
                     'attempts_field': 'putts',
-                    'fail_condition': lambda df: df['putts'] >= 3
+                    'fail_condition': lambda df: df.get('putts', 0) >= 3
                 },
                 {
                     'name': 'Double Bogey',
                     'attempts_field': 'all',
-                    'fail_condition': lambda df: df['score_vs_par'] >= 2
+                    'fail_condition': lambda df: df.get('score_vs_par', 0) >= 2
                 },
                 {
                     'name': 'Par 5 Bogey',
                     'attempts_field': 'par5',
-                    'fail_condition': lambda df: (df['par'] == 5) & (df['hole_score'] >= 6)
+                    'fail_condition': lambda df: (df.get('par', 3) == 5) & (df.get('hole_score', 0) >= 6)
                 },
                 {
                     'name': 'Missed Green',
                     'attempts_field': 'short_game',
-                    'fail_condition': lambda df: df['missed_green'] == True
+                    'fail_condition': lambda df: df.get('missed_green', False) == True
                 },
                 {
                     'name': '125yd Bogey',
                     'attempts_field': 'scoring_shot',
-                    'fail_condition': lambda df: (df['scoring_shot_sg'] < 0) & (df['hole_score'] > df['par'])
+                    'fail_condition': lambda df: (df.get('scoring_shot_sg', 0) < 0) & (df.get('hole_score', 0) > df.get('par', 3))
                 }
             ]
         }
@@ -87,6 +87,10 @@ class Tiger5Engine:
         
         # Calculate score vs par (default par 3)
         hole_metrics['score_vs_par'] = hole_metrics['hole_score'] - 3
+        
+        # Add par column (default par 3 for all holes)
+        # In a real app, this would come from course data
+        hole_metrics['par'] = 3
         
         return hole_metrics
     
@@ -242,9 +246,10 @@ class Tiger5Engine:
             # Check each fail type
             if row.get('putts', 0) >= 3:
                 scenario['fails'].append('3 Putts')
-            if row['score_vs_par'] >= 2:
+            if row.get('score_vs_par', 0) >= 2:
                 scenario['fails'].append('Double Bogey')
-            if row['hole'] in [1, 2, 3] and row['hole_score'] >= 6:  # Par 5 holes
+            # Par 5 holes: check if hole has par of 5
+            if row.get('par', 3) == 5 and row.get('hole_score', 0) >= 6:
                 scenario['fails'].append('Par 5 Bogey')
             
             if scenario['fails']:
