@@ -273,6 +273,49 @@ st.markdown("""
         color: #404040;
     }
     
+    /* Hero cards */
+    .hero-card {
+        background-color: #FFFFFF;
+        border-radius: 16px;
+        padding: 24px 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        border: 2px solid #EEEEEE;
+        transition: all 0.3s ease;
+    }
+    
+    .hero-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    .hero-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2C3E50;
+        line-height: 1.2;
+        font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    .hero-label {
+        font-size: 0.85rem;
+        color: #404040;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 500;
+        margin-top: 0.5rem;
+    }
+    
+    .hero-sg {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+    }
+    
+    .hero-sg.negative {
+        color: #E74C3C;
+    }
+    
     /* Hide Streamlit elements */
     #MainMenu {
         visibility: hidden;
@@ -335,6 +378,7 @@ def initialize_engines(config):
     from engines.tiger5 import Tiger5Engine
     from engines.coach_corner import CoachCornerEngine
     from engines.strokes_gained import StrokesGainedEngine
+    from engines.scoring_performance import ScoringPerformanceEngine
     
     driving = DrivingEngine()
     approach = ApproachEngine()
@@ -343,6 +387,7 @@ def initialize_engines(config):
     tiger5 = Tiger5Engine()
     coach = CoachCornerEngine()
     strokes_gained = StrokesGainedEngine()
+    scoring = ScoringPerformanceEngine()
     
     return {
         'field_mapper': field_mapper,
@@ -357,7 +402,8 @@ def initialize_engines(config):
         'putting': putting,
         'tiger5': tiger5,
         'coach': coach,
-        'strokes_gained': strokes_gained
+        'strokes_gained': strokes_gained,
+        'scoring': scoring
     }
 
 
@@ -427,7 +473,8 @@ def main():
         "Root Cause",
         "Game Pillars",
         "SG Profile",
-        "Coach Magic"
+        "Coach Magic",
+        "Scoring Performance"
     ])
     
     with tabs[0]:
@@ -444,6 +491,9 @@ def main():
     
     with tabs[4]:
         render_coach_magic(filtered_df, engines)
+    
+    with tabs[5]:
+        render_scoring_performance(filtered_df, engines)
 
 
 def load_data(source: str) -> pd.DataFrame:
@@ -1168,6 +1218,327 @@ def render_coach_magic(df: pd.DataFrame, engines: dict):
             """, unsafe_allow_html=True)
     else:
         st.write("Keep practicing to generate recommendations")
+
+
+def render_scoring_performance(df: pd.DataFrame, engines: dict):
+    """Render Scoring Performance page."""
+    import streamlit as st
+    import pandas as pd
+    import plotly.express as px
+    import plotly.graph_objects as go
+    
+    st.markdown('<h2 style="border-bottom: 2px solid #E8E8E8; padding-bottom: 0.5rem;">📊 Scoring Performance</h2>', unsafe_allow_html=True)
+    st.markdown("<p style='color: #404040; margin-bottom: 1.5rem;'>Comprehensive analysis of scoring issues by root cause</p>")
+    
+    if len(df) == 0:
+        st.warning("No data available for scoring performance analysis")
+        return
+    
+    scoring_engine = engines['scoring']
+    
+    # Calculate hole-level metrics
+    hole_metrics = scoring_engine.calculate_hole_metrics(df)
+    
+    # Run all three analysis sections
+    double_bogey = scoring_engine.analyze_double_bogey_plus(hole_metrics, df)
+    bogey = scoring_engine.analyze_bogey(hole_metrics, df)
+    underperformance = scoring_engine.analyze_underperformance(hole_metrics, df)
+    
+    # Calculate summary data
+    summary = scoring_engine.calculate_scoring_summary(hole_metrics, double_bogey, bogey, underperformance)
+    
+    # Calculate hero cards
+    hero_cards = scoring_engine.calculate_hero_cards(double_bogey, bogey, underperformance)
+    
+    # Calculate trend analysis
+    trend_data = scoring_engine.calculate_trend_analysis(double_bogey, bogey, underperformance)
+    
+    # Calculate penalty metrics
+    penalty_metrics = scoring_engine.calculate_penalty_metrics(double_bogey, bogey, df)
+    
+    # Get root cause detail
+    root_cause_detail = scoring_engine.get_root_cause_detail(double_bogey, bogey, underperformance)
+    
+    # Hero card icons mapping
+    HERO_ICONS = {
+        'Short Putts': '⛳',
+        'Mid Range': '📏',
+        'Lag Putts': '🎯',
+        'Driving': '🚗',
+        'Approach': '🎯',
+        'Short Game': '🏌️',
+        'Recovery/Other': '🔧'
+    }
+    
+    # Render overview section
+    st.subheader("📋 Scoring Fail Overview")
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.markdown(f"""
+        <div class="metric-card" style="border-left: 4px solid #E74C3C;">
+            <div class="metric-value">{summary.get('total_fails', 0)}</div>
+            <div class="metric-label">Total Fails</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        db_count = double_bogey.get('total_holes', 0)
+        st.markdown(f"""
+        <div class="metric-card" style="border-left: 4px solid #E74C3C;">
+            <div class="metric-value">{db_count}</div>
+            <div class="metric-label">Double Bogey+</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        b_count = bogey.get('total_holes', 0)
+        st.markdown(f"""
+        <div class="metric-card" style="border-left: 4px solid #F39C12;">
+            <div class="metric-value">{b_count}</div>
+            <div class="metric-label">Bogey</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col4:
+        up_count = underperformance.get('total_holes', 0)
+        st.markdown(f"""
+        <div class="metric-card" style="border-left: 4px solid #3498DB;">
+            <div class="metric-value">{up_count}</div>
+            <div class="metric-label">Underperformance</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.divider()
+    
+    # Render hero cards
+    st.subheader("🎯 Root Cause Hero Cards")
+    
+    categories = list(hero_cards.keys())
+    first_row = categories[:4]
+    second_row = categories[4:]
+    
+    cols1 = st.columns(4)
+    for idx, cat in enumerate(first_row):
+        with cols1[idx]:
+            data = hero_cards[cat]
+            icon = HERO_ICONS.get(cat, '⛳')
+            count = data.get('count', 0)
+            total_sg = data.get('total_sg', 0)
+            sg_color = '#E74C3C' if total_sg < 0 else '#27AE60'
+            
+            st.markdown(f"""
+            <div class="hero-card" style="border-left: 4px solid {sg_color};">
+                <div style="font-size: 1.8em; margin-bottom: 0.25rem;">{icon}</div>
+                <div class="hero-value">{count}</div>
+                <div class="hero-label">{cat}</div>
+                <div class="hero-sg" style="color: {sg_color};">SG: {total_sg:+.2f}</div>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    if second_row:
+        cols2 = st.columns(4)
+        for idx, cat in enumerate(second_row):
+            with cols2[idx]:
+                data = hero_cards[cat]
+                icon = HERO_ICONS.get(cat, '⛳')
+                count = data.get('count', 0)
+                total_sg = data.get('total_sg', 0)
+                sg_color = '#E74C3C' if total_sg < 0 else '#27AE60'
+                
+                st.markdown(f"""
+                <div class="hero-card" style="border-left: 4px solid {sg_color};">
+                    <div style="font-size: 1.8em; margin-bottom: 0.25rem;">{icon}</div>
+                    <div class="hero-value">{count}</div>
+                    <div class="hero-label">{cat}</div>
+                    <div class="hero-sg" style="color: {sg_color};">SG: {total_sg:+.2f}</div>
+                </div>
+                """, unsafe_allow_html=True)
+    
+    st.divider()
+    
+    # Render trend analysis
+    with st.expander("📈 Root Cause Trend Analysis", expanded=False):
+        data = trend_data.get('data', [])
+        categories_rc = trend_data.get('categories', [])
+        
+        if len(data) == 0:
+            st.info("Not enough data to display trend analysis")
+        else:
+            trend_df = pd.DataFrame(data)
+            
+            fig = go.Figure()
+            colors = px.colors.qualitative.Set2
+            color_idx = 0
+            
+            for category in categories_rc:
+                if category in trend_df.columns:
+                    fig.add_trace(go.Bar(
+                        x=trend_df['round'],
+                        y=trend_df[category],
+                        name=category,
+                        marker_color=colors[color_idx % len(colors)]
+                    ))
+                    color_idx += 1
+            
+            fig.add_trace(go.Scatter(
+                x=trend_df['round'],
+                y=trend_df['total_fails'],
+                name='Total Fails',
+                mode='lines+markers',
+                line=dict(color='#2C3E50', width=3),
+                yaxis='y2'
+            ))
+            
+            fig.update_layout(
+                yaxis=dict(title='Root Cause Count', overlaying='y2', side='left'),
+                yaxis2=dict(title='Total Fails', side='right'),
+                xaxis_title='Round',
+                legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='center', x=0.5),
+                height=400,
+                barmode='stack'
+            )
+            
+            st.plotly_chart(fig, use_container_width=True)
+    
+    st.divider()
+    
+    # Render penalty metrics
+    st.subheader("⚠️ Penalty & Severe Shot Analysis")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        bogey_pct = penalty_metrics.get('bogey_with_penalty_pct', 0)
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-value" style="color: #F39C12;">{bogey_pct:.1f}%</div>
+            <div class="metric-label">Bogey Holes w/ Penalty</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        double_pct = penalty_metrics.get('double_bogey_with_penalty_pct', 0)
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-value" style="color: #E74C3C;">{double_pct:.1f}%</div>
+            <div class="metric-label">Double Bogey+ w/ Penalty</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        severe_pct = penalty_metrics.get('double_bogey_multiple_severe_pct', 0)
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-value" style="color: #E74C3C;">{severe_pct:.1f}%</div>
+            <div class="metric-label">Double Bogey 2+ Severe Shots</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.divider()
+    
+    # Render detail sections
+    ROOT_CAUSE_CATEGORIES = ['Short Putts', 'Mid Range', 'Lag Putts', 
+                            'Driving', 'Approach', 'Short Game', 'Recovery/Other']
+    
+    # Section 1: Double Bogey+
+    st.markdown("#### 🔴 Section 1: Double Bogey+ Root Cause")
+    total_db = double_bogey.get('total_holes', 0)
+    if total_db > 0:
+        db_counts = double_bogey.get('category_counts', {})
+        db_sg = double_bogey.get('category_sg', {})
+        
+        breakdown_data = [{'Category': k, 'Count': db_counts.get(k, 0), 'Total SG': db_sg.get(k, 0)} 
+                         for k in ROOT_CAUSE_CATEGORIES if db_counts.get(k, 0) > 0]
+        if breakdown_data:
+            bd_df = pd.DataFrame(breakdown_data)
+            st.dataframe(bd_df, hide_index=True)
+    else:
+        st.info("No Double Bogey+ holes")
+    
+    st.divider()
+    
+    # Section 2: Bogey
+    st.markdown("#### 🟡 Section 2: Bogey Root Cause")
+    total_b = bogey.get('total_holes', 0)
+    if total_b > 0:
+        b_counts = bogey.get('category_counts', {})
+        b_sg = bogey.get('category_sg', {})
+        
+        breakdown_data = [{'Category': k, 'Count': b_counts.get(k, 0), 'Total SG': b_sg.get(k, 0)} 
+                         for k in ROOT_CAUSE_CATEGORIES if b_counts.get(k, 0) > 0]
+        if breakdown_data:
+            bd_df = pd.DataFrame(breakdown_data)
+            st.dataframe(bd_df, hide_index=True)
+    else:
+        st.info("No Bogey holes")
+    
+    st.divider()
+    
+    # Section 3: Underperformance
+    st.markdown("#### 🔵 Section 3: Underperformance Root Cause")
+    total_up = underperformance.get('total_holes', 0)
+    if total_up > 0:
+        up_counts = underperformance.get('category_counts', {})
+        up_sg = underperformance.get('category_sg', {})
+        
+        breakdown_data = [{'Category': k, 'Count': up_counts.get(k, 0), 'Total SG': up_sg.get(k, 0)} 
+                         for k in ROOT_CAUSE_CATEGORIES if up_counts.get(k, 0) > 0]
+        if breakdown_data:
+            bd_df = pd.DataFrame(breakdown_data)
+            st.dataframe(bd_df, hide_index=True)
+    else:
+        st.info("No Underperformance holes")
+    
+    st.divider()
+    
+    # Render root cause detail
+    with st.expander("📋 Root Cause Detail Data", expanded=False):
+        st.markdown("#### Shot-Level Detail by Root Cause Category")
+        
+        if len(root_cause_detail) == 0:
+            st.info("No detail data available")
+        else:
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                selected_section = st.multiselect(
+                    "Filter by Section",
+                    options=['Double Bogey+', 'Bogey', 'Underperformance'],
+                    default=['Double Bogey+', 'Bogey', 'Underperformance']
+                )
+            
+            with col2:
+                selected_category = st.multiselect(
+                    "Filter by Root Cause",
+                    options=ROOT_CAUSE_CATEGORIES,
+                    default=ROOT_CAUSE_CATEGORIES
+                )
+            
+            filtered_df = root_cause_detail.copy()
+            
+            if 'section' in filtered_df.columns and selected_section:
+                filtered_df = filtered_df[filtered_df['section'].isin(selected_section)]
+            
+            if 'root_cause' in filtered_df.columns and selected_category:
+                filtered_df = filtered_df[filtered_df['root_cause'].isin(selected_category)]
+            
+            st.markdown(f"Showing {len(filtered_df)} of {len(root_cause_detail)} records")
+            
+            display_cols = ['round_id', 'hole', 'section', 'shot_number', 'shot_type', 
+                           'distance', 'sg_value', 'root_cause', 'penalty']
+            available_cols = [c for c in display_cols if c in filtered_df.columns]
+            
+            if available_cols:
+                st.dataframe(
+                    filtered_df[available_cols],
+                    hide_index=True,
+                    column_config={
+                        'sg_value': st.column_config.NumberColumn('SG', format='%.2f'),
+                        'distance': st.column_config.NumberColumn('Dist (yd)', format='%.0f')
+                    }
+                )
 
 
 if __name__ == "__main__":
